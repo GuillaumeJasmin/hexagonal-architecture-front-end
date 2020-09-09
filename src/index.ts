@@ -1,0 +1,1 @@
+import './adapters/primary/ReactJS'
