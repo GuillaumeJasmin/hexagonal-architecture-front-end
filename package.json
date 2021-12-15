@@ -22,7 +22,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "rxjs": "^6.6.3",
-    "typescript": "~3.7.2",
+    "typescript": "~3.8.0",
     "validator": "^13.1.1"
   },
   "scripts": {
