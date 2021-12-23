@@ -2,11 +2,12 @@ import './App.css';
 // import './registerServices';
 // import './registerUseCase';
 import { authUser, locale } from './useCases';
-import { useObservableData } from './utils/useObservable';
+import { useObservable } from './utils/useObservable';
 
 function App() {
-  const user = useObservableData(authUser.user$);
-  const localeValue = useObservableData(locale.locale$);
+  const user = useObservable(authUser.user$);
+  // const localeValue = useObservable(locale.locale$);
+  const localeValue = useObservable(authUser.locale$);
 
   return (
     <div>

@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Observable } from 'rxjs'
+import { getBehaviorSubjectValue } from './getBehaviorSubjectValue'
 
-export function useObservableData<T>(observable$: Observable<T>) {
+export function useObservable<T>(observable$: Observable<T>) {
   const [data, setData] = useState<T | undefined>(() => {
-    let initialValue: T | undefined = undefined;
-    
-    observable$.subscribe((data) => {
-      initialValue = data
-    }).unsubscribe()
-
-    return initialValue
+    return getBehaviorSubjectValue(observable$);
   })
 
   useEffect(() => {
+    // const subscription = observable$.subscribe(setData)
     const subscription = observable$.subscribe(setData)
 
     return () => subscription.unsubscribe()

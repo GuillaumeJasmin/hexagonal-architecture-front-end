@@ -2,5 +2,5 @@
 import './registerServices'
 
 // register use cases
-import './useCases/AuthUser';
 import './useCases/Locale';
+import './useCases/AuthUser';

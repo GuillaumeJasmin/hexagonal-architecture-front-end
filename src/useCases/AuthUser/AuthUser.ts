@@ -2,27 +2,34 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Store } from '../../utils/Store';
 import type { IAuthUserApi } from '../../gatewayInterfaces/IAuthUserApi';
 import { IAuthUser, AuthUserState } from './IAuthUser';
-import { RegisterUseCase, InjectApiService } from '../../utils/decorators';
+import type { ILocale } from '../Locale/ILocale';
+import {
+  RegisterUseCase,
+  InjectApiService,
+  InjectUseCase,
+} from '../../utils/decorators';
+import { getBehaviorSubjectValue } from '../../utils/getBehaviorSubjectValue';
 
-const initialState: AuthUserState = {};
+const initialState: AuthUserState = {
+  user: null,
+};
 
 @RegisterUseCase('AuthUser')
 export class AuthUser extends Store<AuthUserState> implements IAuthUser {
-  public user$ = this.state$.pipe(
-    map((state) => {
-      return state.user
-    }),
-    distinctUntilChanged()
-  );
+  public user$ = this.state$.pipe(map((state) => state.user));
 
-  @InjectApiService('AuthUser')
-  private authUserApi!: IAuthUserApi;
+  public locale$ = this.locale?.locale$;
 
-  constructor() {
+  constructor(
+    @InjectUseCase('Locale') private locale: ILocale,
+    @InjectApiService('AuthUser') private authUserApi: IAuthUserApi
+  ) {
     super(initialState);
   }
 
   fetchUser() {
     this.authUserApi.fetchUser().then((user) => this.setState({ user }));
+
+    console.log(getBehaviorSubjectValue(this.user$));
   }
 }

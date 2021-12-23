@@ -1,4 +1,4 @@
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RegisterUseCase } from '../../utils/decorators';
 import { Store } from '../../utils/Store';
 import { ILocale, LocaleState } from './ILocale';
@@ -9,10 +9,7 @@ const initialState: LocaleState = {
 
 @RegisterUseCase('Locale')
 export class Locale extends Store<LocaleState> implements ILocale {
-  public locale$ = this.state$.pipe(
-    map((state) => state.locale),
-    distinctUntilChanged()
-  );
+  public locale$ = this.state$.pipe(map((state) => state.locale));
 
   constructor() {
     super(initialState);
