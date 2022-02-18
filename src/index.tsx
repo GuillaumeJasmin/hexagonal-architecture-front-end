@@ -1,6 +1,9 @@
 import 'reflect-metadata';
 import React from 'react';
 import ReactDOM from 'react-dom';
+// import './registerUseCase';
+import './services/registerServices';
+import './core/useCases/registerUseCase';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
