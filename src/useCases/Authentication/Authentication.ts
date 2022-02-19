@@ -1,9 +1,8 @@
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { Store } from '../../utils/Store';
-import type { IAuthenticationApi } from '../../../services/AuthenticationApi/IAuthenticationApi';
+import { distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
+import { Store } from '../../hexact';
+import { RegisterUseCase, InjectService, InjectUseCase } from '../../hexactInstance';
+import type { IAuthenticationApi } from '../../services/AuthenticationApi/IAuthenticationApi';
 import { IAuthentication, AuthenticationState } from './IAuthentication';
-import { RegisterUseCase, InjectUseCase } from '../tools';
-import { InjectService } from '../../../services/tools';
 import type { ICurrentUser } from '../CurrentUser/ICurrentUser';
 
 const initialAuthenticationState: AuthenticationState = {
@@ -23,7 +22,10 @@ export class Authentication
   private authenticationApi!: IAuthenticationApi;
 
   public get isLogged$() {
-    return this.currentUser.user$.pipe(map((user) => !!user));
+    return this.currentUser.user$.pipe(
+      map((user) => !!user),
+      distinctUntilChanged()
+    );
   }
 
   public get isLogging$() {
@@ -33,14 +35,16 @@ export class Authentication
   public get onLoginSucceeded$() {
     return this.isLogged$.pipe(
       filter((isLogged) => isLogged),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      tap(() => console.log('onLoginSucceeded$')),
     );
   }
 
   public get onLogoutSucceeded$() {
     return this.isLogged$.pipe(
       filter((isLogged) => !isLogged),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      tap(() => console.log('onLogoutSucceeded$')),
     );
   }
 
@@ -58,5 +62,9 @@ export class Authentication
     } finally {
       this.setState({ isLogging: false });
     }
+  }
+
+  public async logout() {
+    this.currentUser.setUser(null);
   }
 }

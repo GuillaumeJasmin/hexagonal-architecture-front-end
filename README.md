@@ -1,46 +1,98 @@
-# Getting Started with Create React App
+# Hexy
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An simple library to help build front-end hexagonal architecture
 
-## Available Scripts
+After many year as front-end developer, I always find hard to build a perfet hexagonal architecture.
+I offen use redux for my front-end projet. It's a amazing lib that make possible to use FLUX pattern very easy.
+...
 
-In the project directory, you can run:
+## use-cases
 
-### `npm start`
+Use-case are the core logic of an application.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```ts
+useCases
+  └── Authentication
+        └── Authentication.ts         # Main class of the use-case
+        └── Authentication.spec.ts    # Unit tests
+        └── AuthenticationMock.ts     # Fake class with spy
+        └── IAuthentication.ts        # Interface of the use-case
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Authentication.ts
 
-### `npm test`
+```ts
+import { distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
+import { Store } from 'hexy';
+import { RegisterUseCase, InjectUseCase, InjectService } from '../hexyInstance';
+import type { IAuthenticationApi } from './services/AuthenticationApi/IAuthenticationApi';
+import { IAuthentication, AuthenticationState } from './IAuthentication';
+import type { ICurrentUser } from '../CurrentUser/ICurrentUser';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const initialAuthenticationState: AuthenticationState = {
+  isLogging: false,
+  loginError: null,
+};
 
-### `npm run build`
+@RegisterUseCase('Authentication')
+export class Authentication extends Store<AuthenticationState> implements IAuthentication {
+  @InjectUseCase('CurrentUser')
+  private currentUser!: ICurrentUser;
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  @InjectService('Authentication')
+  private authenticationApi!: IAuthenticationApi;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  public get isLogged$() {
+    return this.currentUser.user$.pipe(
+      map((user) => !!user),
+      distinctUntilChanged()
+    );
+  }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  public get isLogging$() {
+    return this.select((state) => state.isLogging);
+  }
 
-### `npm run eject`
+  public get onLoginSucceeded$() {
+    return this.isLogged$.pipe(
+      filter((isLogged) => isLogged),
+      distinctUntilChanged(),
+      tap(() => console.log('onLoginSucceeded$'))
+    );
+  }
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  public get onLogoutSucceeded$() {
+    return this.isLogged$.pipe(
+      filter((isLogged) => !isLogged),
+      distinctUntilChanged(),
+      tap(() => console.log('onLogoutSucceeded$'))
+    );
+  }
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  constructor() {
+    super(initialAuthenticationState);
+  }
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  public async login(data: { email: string; password: string }) {
+    try {
+      this.setState({ isLogging: true });
+      const { userId } = await this.authenticationApi.login(data);
+      await this.currentUser.fetchUserById({ userId });
+    } catch (error: unknown) {
+      this.setState({ loginError: 'Error' });
+    } finally {
+      this.setState({ isLogging: false });
+    }
+  }
+}
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Services
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```ts
+services
+  └── AuthenticationApi
+        └── AuthenticationApi.ts         # Main class of the service
+        └── AuthenticationApiMock.ts     # Fake class with spy
+        └── IAuthenticationApi.ts        # Interface of the service
+```

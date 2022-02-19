@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import './App.css';
-import { authentication, currentUser } from './core/useCases';
-import { useObservable } from './core/utils/useObservable';
+import { useObservable } from '../../hexact';
+import { useNavigate } from 'react-router-dom';
+import { authentication } from '../../useCases';
 
-function App() {
-  const user = useObservable(currentUser.user$);
+export function Login() {
   const isLogging = useObservable(authentication.isLogging$);
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,20 +28,12 @@ function App() {
 
   useEffect(() => {
     authentication.onLoginSucceeded$.subscribe(() => {
-      console.log('redirect to dashboard');
+      navigate('/dashboard');
     });
-  }, []);
+  }, [navigate]);
 
   if (isLogging) {
     return <div className="main-container">Logging...</div>;
-  }
-
-  if (user) {
-    return (
-      <div className="main-container">
-        {user.name} - {user.email}
-      </div>
-    );
   }
 
   return (
@@ -68,5 +60,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

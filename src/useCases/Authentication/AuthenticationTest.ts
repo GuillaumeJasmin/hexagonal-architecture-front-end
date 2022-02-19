@@ -1,7 +1,9 @@
+import { RegisterUseCase, getUseCase } from '../../hexactInstance';
 import { IAuthentication } from './IAuthentication';
 import { BehaviorSubject } from 'rxjs';
 
-export class Authentication implements IAuthentication {
+@RegisterUseCase('Authentication')
+export class AuthenticationTest implements IAuthentication {
   isLogging$ = new BehaviorSubject(false);
 
   isLogged$ = new BehaviorSubject(false);
@@ -11,4 +13,8 @@ export class Authentication implements IAuthentication {
   onLogoutSucceeded$ = new BehaviorSubject(null);
   
   login = jest.fn<ReturnType<IAuthentication['login']>, Parameters<IAuthentication['login']>>();
+  
+  logout = jest.fn<ReturnType<IAuthentication['logout']>, Parameters<IAuthentication['logout']>>();
 }
+
+export const authentication = getUseCase('Authentication') as AuthenticationTest;

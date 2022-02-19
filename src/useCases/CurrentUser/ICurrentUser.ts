@@ -13,4 +13,5 @@ export interface CurrentUserState {
 export interface ICurrentUser {
   user$: Observable<CurrentUserState['user']>;
   fetchUserById(data: { userId: string }): Promise<void>;
+  setUser(user: CurrentUserState['user']): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { RegisterService } from '../tools';
+import { RegisterService } from '../../hexactInstance';
 import type { IUserApi } from './IUserApi';
 
 @RegisterService('User')
