@@ -8,6 +8,7 @@ import type { ICurrentUser } from '../CurrentUser/ICurrentUser';
 
 const initialAuthenticationState: AuthenticationState = {
   isLogging: false,
+  loginError: null,
 };
 
 @RegisterUseCase('Authentication')
@@ -15,30 +16,35 @@ export class Authentication
   extends Store<AuthenticationState>
   implements IAuthentication
 {
-  // @InjectService('Authentication')
-  // protected authenticationApi!: IAuthenticationApi;
+  @InjectUseCase('CurrentUser')
+  private currentUser!: ICurrentUser;
 
-  // @InjectUseCase('CurrentUser')
-  // protected currentUser!: ICurrentUser;
+  @InjectService('Authentication')
+  private authenticationApi!: IAuthenticationApi;
 
-  public isLogged$ = this.currentUser?.user$.pipe(map((user) => !!user));
+  public get isLogged$() {
+    return this.currentUser.user$.pipe(map((user) => !!user));
+  }
 
-  public isLogging$ = this.select(state => state.isLogging);
+  public get isLogging$() {
+    return this.select((state) => state.isLogging);
+  }
 
-  public onLoginSucceeded$ = this.isLogged$.pipe(
-    filter((isLogged) => isLogged),
-    distinctUntilChanged()
-  );
+  public get onLoginSucceeded$() {
+    return this.isLogged$.pipe(
+      filter((isLogged) => isLogged),
+      distinctUntilChanged()
+    );
+  }
 
-  public onLogoutSucceeded$ = this.isLogged$.pipe(
-    filter((isLogged) => !isLogged),
-    distinctUntilChanged()
-  );
+  public get onLogoutSucceeded$() {
+    return this.isLogged$.pipe(
+      filter((isLogged) => !isLogged),
+      distinctUntilChanged()
+    );
+  }
 
-  constructor(
-    @InjectUseCase('CurrentUser') public currentUser: ICurrentUser,
-    @InjectService('Authentication') public authenticationApi: IAuthenticationApi,
-  ) {
+  constructor() {
     super(initialAuthenticationState);
   }
 
@@ -48,7 +54,7 @@ export class Authentication
       const { userId } = await this.authenticationApi.login(data);
       await this.currentUser.fetchUserById({ userId });
     } catch (error: unknown) {
-      throw new Error('Login failed');
+      this.setState({ loginError: 'Error' });
     } finally {
       this.setState({ isLogging: false });
     }

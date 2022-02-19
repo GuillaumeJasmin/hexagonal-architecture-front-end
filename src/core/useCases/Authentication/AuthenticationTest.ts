@@ -1,10 +1,7 @@
-import { Store } from '../../utils/Store';
-import { IAuthentication, AuthenticationState } from './IAuthentication';
-import { RegisterUseCase } from '../tools';
+import { IAuthentication } from './IAuthentication';
 import { BehaviorSubject } from 'rxjs';
 
-@RegisterUseCase('Authentication')
-export class Authentication extends Store<AuthenticationState> implements IAuthentication {
+export class Authentication implements IAuthentication {
   isLogging$ = new BehaviorSubject(false);
 
   isLogged$ = new BehaviorSubject(false);

@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 
 export interface AuthenticationState {
   isLogging: boolean;
+  loginError: string | null;
 }
 
 export interface IAuthentication {

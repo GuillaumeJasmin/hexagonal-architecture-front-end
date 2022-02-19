@@ -1,2 +1,2 @@
-import './Locale/LocalTest';
-import './AuthUser/AuthUserTest';
+import './CurrentUser/CurrentUserTest';
+import './Authentication/AuthenticationTest';

@@ -61,6 +61,7 @@ export function createUseCasesTools<UseCase extends Record<string, unknown>>() {
   }
 
   function setUseCase<U extends UseCaseKey, T extends UseCase[U]>(useCaseName: U, value: T) {
+    console.log(`setUseCase ${useCaseName}`);
     Container.set(`${useCasePrefix}.${useCaseName}`, value);
 
     return value;
@@ -71,6 +72,7 @@ export function createUseCasesTools<UseCase extends Record<string, unknown>>() {
       return Container.get<UseCase[T]>(`${useCasePrefix}.${useCaseName}`);
     } catch(e) {
       console.error(`get useCase failed: ${useCasePrefix}.${useCaseName}`);
+      console.error(e);
       throw e;
     }
   }

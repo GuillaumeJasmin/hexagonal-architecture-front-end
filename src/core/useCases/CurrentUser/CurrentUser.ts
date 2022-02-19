@@ -13,7 +13,9 @@ export class CurrentUser extends Store<CurrentUserState> implements ICurrentUser
   @InjectService('User')
   protected userApi!: IUserApi;
   
-  public user$ = this.select((state) => state.user);
+  public get user$() {
+    return this.select((state) => state.user)
+  };
 
   constructor() {
     super(initialCurrentUserState);

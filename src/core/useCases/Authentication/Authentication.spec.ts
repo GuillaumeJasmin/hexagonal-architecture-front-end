@@ -1,9 +1,8 @@
 import 'reflect-metadata';
 import { setService } from '../../../services/tools';
-import { getUseCase } from '../tools';
-// import '../../../services/registerServicesTests';
+import { getUseCase, setUseCase } from '../tools';
 import { AuthenticationApiTest } from '../../../services/AuthenticationApi/AuthenticationApiTest';
-import '../registerUseCaseTest';
+import { CurrentUserTest } from '../../useCases/CurrentUser/CurrentUserTest';
 import './Authentication';
 import { Observable } from 'rxjs';
 
@@ -17,42 +16,38 @@ function spySubscribe(obs$: Observable<any>) {
 
 describe('UseCase - Authentication', () => {
   it('should submit login', async () => {
-    const AuthenticationService = setService(
+    const authenticationService = setService(
       'Authentication',
       new AuthenticationApiTest()
     );
-    const AuthenticationUseCase = getUseCase('Authentication');
+    const currentUserUseCase = setUseCase('CurrentUser', new CurrentUserTest());
+    const authenticationUseCase = getUseCase('Authentication');
 
     const isLoggingSubscription = spySubscribe(
-      AuthenticationUseCase.isLogging$
+      authenticationUseCase.isLogging$
     );
 
-    AuthenticationService.login.mockResolvedValue({
-      userId: 'abc',
-    });
+    authenticationService.login.mockResolvedValue({ userId: 'abc' });
 
-    expect(true).toBe(true);
-
-    const loginPromise = AuthenticationUseCase.login({
+    await authenticationUseCase.login({
       email: 'john.doe@email.com',
       password: 'abc',
     });
 
-    expect(isLoggingSubscription).toHaveBeenNthCalledWith(1, true);
-
-    await loginPromise;
-
     expect(isLoggingSubscription).toHaveBeenNthCalledWith(1, false);
+    expect(isLoggingSubscription).toHaveBeenNthCalledWith(2, true);
+    expect(isLoggingSubscription).toHaveBeenNthCalledWith(3, false);
+    expect(isLoggingSubscription).toHaveBeenCalledTimes(3);
 
-    // expect(AuthenticationService.login).toHaveBeenCalledTimes(1);
-    // expect(AuthenticationService.login).toHaveBeenCalledWith({
-    //   email: 'john.doe@email.com',
-    //   password: 'abc',
-    // });
-    // expect(userSubscription).toHaveBeenCalledWith({
-    //   email: 'john.doe@email.com',
-    //   name: 'John',
-    //   defaultLanguage: 'fr',
-    // });
+    expect(authenticationService.login).toHaveBeenCalledTimes(1);
+    expect(authenticationService.login).toHaveBeenCalledWith({
+      email: 'john.doe@email.com',
+      password: 'abc',
+    });
+
+    expect(currentUserUseCase.fetchUserById).toHaveBeenCalledTimes(1);
+    expect(currentUserUseCase.fetchUserById).toHaveBeenNthCalledWith(1, {
+      userId: 'abc',
+    });
   });
 });

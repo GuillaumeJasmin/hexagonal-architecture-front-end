@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Observable } from 'rxjs';
 import { getBehaviorSubjectValue } from './getBehaviorSubjectValue';
 

@@ -10,11 +10,11 @@ import { reduxDevTool } from './reduxDevTool';
 
 function distinctUntilObjectValuesChanged<T extends Record<string, any>>() {
   return distinctUntilChanged((previous: T, current: T) => {
-    const propertiesAreNotEqual = Object.keys(current).some(
+    const propertiesAreAllEqual = Object.keys(current).every(
       (key) => current[key] === previous[key]
     );
 
-    return propertiesAreNotEqual;
+    return propertiesAreAllEqual;
   });
 }
 
