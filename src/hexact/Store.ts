@@ -47,9 +47,11 @@ export class Store<State extends Record<string, any>> {
     this.store$.next(nextState);
   }
 
-  // __Experimental
   protected select<T>(mapFn: (state: State) => T) {
-    return this.state$.pipe(map((state) => mapFn(state)));
+    return this.state$.pipe(
+      map((state) => mapFn(state)),
+      distinctUntilChanged()
+    );
   }
 
   /**
