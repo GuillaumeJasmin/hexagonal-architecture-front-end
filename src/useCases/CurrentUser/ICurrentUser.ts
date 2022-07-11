@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { Token } from 'typedi';
 
 interface User {
   id: string;
@@ -15,3 +16,5 @@ export interface ICurrentUser {
   fetchUserById(data: { userId: string }): Promise<void>;
   setUser(user: CurrentUserState['user']): Promise<void>;
 }
+
+export const currentUserToken = new Token<ICurrentUser>('CurrentUser');

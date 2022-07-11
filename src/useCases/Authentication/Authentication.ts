@@ -1,70 +1,88 @@
-import { distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
-import { Store } from '../../hexact';
-import { RegisterUseCase, InjectService, InjectUseCase } from '../../hexactInstance';
+import { Inject } from 'typedi';
+import { filter, map, skip } from 'rxjs/operators';
+import { createStore, withProps } from '@ngneat/elf';
+import { UseCase } from '../../core';
 import type { IAuthenticationApi } from '../../services/AuthenticationApi/IAuthenticationApi';
-import { IAuthentication, AuthenticationState } from './IAuthentication';
+import { authenticationApiToken } from '../../services/AuthenticationApi/IAuthenticationApi';
+import { IAuthentication, authenticationToken } from './IAuthentication';
 import type { ICurrentUser } from '../CurrentUser/ICurrentUser';
+import { currentUserToken } from '../CurrentUser/ICurrentUser';
+import {
+  updateRequestStatus,
+  withRequestsStatus,
+  selectRequestStatus,
+  selectIsRequestPending,
+} from '@ngneat/elf-requests';
+
+export interface AuthenticationState {
+  isLogging: boolean;
+  loginError: string | null;
+  user: {
+    name: string;
+    email: string;
+  } | null;
+}
 
 const initialAuthenticationState: AuthenticationState = {
   isLogging: false,
   loginError: null,
+  user: null,
 };
 
-@RegisterUseCase('Authentication')
-export class Authentication
-  extends Store<AuthenticationState>
-  implements IAuthentication
-{
-  @InjectUseCase('CurrentUser')
-  private currentUser!: ICurrentUser;
+@UseCase(authenticationToken)
+export class Authentication implements IAuthentication {
+  private store = createStore(
+    { name: 'Authentication' },
+    withProps<AuthenticationState>(initialAuthenticationState),
+    withRequestsStatus<'login' | 'logout'>()
+  );
 
-  @InjectService('Authentication')
-  private authenticationApi!: IAuthenticationApi;
+  public isLogging$ = this.store.pipe(selectIsRequestPending('login'));
 
   public get isLogged$() {
     return this.currentUser.user$.pipe(
       map((user) => !!user),
-      distinctUntilChanged()
+      filter((isLogged) => isLogged)
     );
   }
 
-  public get isLogging$() {
-    return this.select((state) => state.isLogging);
-  }
+  public onLoginSucceeded$ = this.store.pipe(
+    selectRequestStatus('login'),
+    skip(1),
+    filter((status) => status.value === 'success')
+  );
 
-  public get onLoginSucceeded$() {
-    return this.isLogged$.pipe(
-      filter((isLogged) => isLogged),
-      distinctUntilChanged(),
-      tap(() => console.log('onLoginSucceeded$')),
-    );
-  }
+  public onLogoutSucceeded$ = this.store.pipe(
+    selectRequestStatus('logout'),
+    skip(1),
+    filter((status) => status.value === 'success')
+  );
 
-  public get onLogoutSucceeded$() {
-    return this.isLogged$.pipe(
-      filter((isLogged) => !isLogged),
-      distinctUntilChanged(),
-      tap(() => console.log('onLogoutSucceeded$')),
-    );
-  }
+  @Inject(authenticationApiToken)
+  private authenticationApi!: IAuthenticationApi;
 
-  constructor() {
-    super(initialAuthenticationState);
-  }
+  @Inject(currentUserToken)
+  private currentUser!: ICurrentUser;
 
   public async login(data: { email: string; password: string }) {
     try {
-      this.setState({ isLogging: true });
+      this.store.update(updateRequestStatus('login', 'pending'));
       const { userId } = await this.authenticationApi.login(data);
       await this.currentUser.fetchUserById({ userId });
+      this.store.update(updateRequestStatus('login', 'success'));
     } catch (error: unknown) {
-      this.setState({ loginError: 'Error' });
-    } finally {
-      this.setState({ isLogging: false });
+      console.log('ERROR', error);
+      this.store.update(updateRequestStatus('login', 'error', error));
     }
   }
 
   public async logout() {
-    this.currentUser.setUser(null);
+    try {
+      this.store.update(updateRequestStatus('logout', 'pending'));
+      await this.authenticationApi.logout();
+      this.store.update(updateRequestStatus('logout', 'success'));
+    } catch (error: unknown) {
+      this.store.update(updateRequestStatus('logout', 'error', error));
+    }
   }
 }

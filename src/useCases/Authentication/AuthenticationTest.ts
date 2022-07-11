@@ -1,20 +1,33 @@
-import { RegisterUseCase, getUseCase } from '../../hexactInstance';
-import { IAuthentication } from './IAuthentication';
-import { BehaviorSubject } from 'rxjs';
+import { Container } from 'typedi';
+import { UseCaseTest } from '../../core';
+import type { IAuthentication } from './IAuthentication';
+import { authenticationToken } from './IAuthentication';
+import { mockBehaviorSubject } from '../../core/RxJSMock';
+import { mockSubject } from '../../core/RxJSMock';
 
-@RegisterUseCase('Authentication')
+@UseCaseTest(authenticationToken)
 export class AuthenticationTest implements IAuthentication {
-  isLogging$ = new BehaviorSubject(false);
+  isLogging$ = mockBehaviorSubject<IAuthentication['isLogging$']>('isLogging');
 
-  isLogged$ = new BehaviorSubject(false);
+  isLogged$ = mockBehaviorSubject<IAuthentication['isLogged$']>('isLogged');
 
-  onLoginSucceeded$ = new BehaviorSubject(null);
-  
-  onLogoutSucceeded$ = new BehaviorSubject(null);
-  
-  login = jest.fn<ReturnType<IAuthentication['login']>, Parameters<IAuthentication['login']>>();
-  
-  logout = jest.fn<ReturnType<IAuthentication['logout']>, Parameters<IAuthentication['logout']>>();
+  onLoginSucceeded$ = mockSubject<IAuthentication['onLoginSucceeded$']>();
+
+  onLogoutSucceeded$ = mockSubject<IAuthentication['onLogoutSucceeded$']>();
+
+  login = jest.fn<
+    ReturnType<IAuthentication['login']>,
+    Parameters<IAuthentication['login']>
+  >();
+
+  logout = jest.fn<
+    ReturnType<IAuthentication['logout']>,
+    Parameters<IAuthentication['logout']>
+  >();
 }
 
-export const authentication = getUseCase('Authentication') as AuthenticationTest;
+export function resetAndGetAuthentication() {
+  Container.set(authenticationToken, new AuthenticationTest());
+
+  return Container.get<AuthenticationTest>(authenticationToken);
+}

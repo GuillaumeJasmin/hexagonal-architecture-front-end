@@ -1,9 +1,11 @@
-import { getService, RegisterService } from '../../hexactInstance';
+import { Container } from 'typedi';
+import { UseCase } from '../../core';
 import type { IUserApi } from './IUserApi';
+import { userApiToken } from './IUserApi';
 
-@RegisterService('User')
+@UseCase(userApiToken)
 export class UserApiTest implements IUserApi {
   fetchUserById = jest.fn<ReturnType<IUserApi['fetchUserById']>, Parameters<IUserApi['fetchUserById']>>();
 }
 
-export const userApi = getService('User') as UserApiTest;
+export const authenticationApi = Container.get<UserApiTest>(userApiToken);

@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useObservable } from '../../hexact';
+import { useCallback, useState } from 'react';
+import { useObservable } from '@ngneat/react-rxjs';
 import { useNavigate } from 'react-router-dom';
-import { authentication } from '../../useCases';
+import { useSubscribe } from '../../../core';
+import { useInstances } from '../../../useCases/instances';
 
 export function Login() {
-  const isLogging = useObservable(authentication.isLogging$);
+  const { authentication } = useInstances();
+
+  const [isLogging] = useObservable(authentication.isLogging$);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -23,14 +26,13 @@ export function Login() {
       event.preventDefault();
       authentication.login({ email, password });
     },
-    [email, password]
+    [authentication, email, password]
   );
 
-  useEffect(() => {
-    authentication.onLoginSucceeded$.subscribe(() => {
-      navigate('/dashboard');
-    });
-  }, [navigate]);
+  useSubscribe(authentication.onLoginSucceeded$, () => {
+    console.log('onLoginSucceeded');
+    navigate('/dashboard');
+  });
 
   if (isLogging) {
     return <div className="main-container">Logging...</div>;

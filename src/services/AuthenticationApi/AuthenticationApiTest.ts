@@ -1,12 +1,23 @@
-import { getService, RegisterService } from '../../hexactInstance';
+import { Container } from 'typedi';
+import { UseCaseTest } from '../../core';
 import type { IAuthenticationApi } from './IAuthenticationApi';
+import { authenticationApiToken } from './IAuthenticationApi';
 
-@RegisterService('Authentication')
+@UseCaseTest(authenticationApiToken)
 export class AuthenticationApiTest implements IAuthenticationApi {
-  login = jest.fn<
+  public login = jest.fn<
     ReturnType<IAuthenticationApi['login']>,
     Parameters<IAuthenticationApi['login']>
   >();
+
+  public logout = jest.fn<
+    ReturnType<IAuthenticationApi['logout']>,
+    Parameters<IAuthenticationApi['logout']>
+  >();
 }
 
-export const authenticationApi = getService('Authentication') as AuthenticationApiTest;
+export function resetAndGetAuthenticationApi() {
+  Container.set(authenticationApiToken, new AuthenticationApiTest());
+
+  return Container.get<AuthenticationApiTest>(authenticationApiToken);
+}

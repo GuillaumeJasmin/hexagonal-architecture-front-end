@@ -1,9 +1,19 @@
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Login } from './components/Login';
-import { Dashboard } from './components/Dashboard';
+import { Login } from './components/Login/Login';
+import { Dashboard } from './components/Dashboard/Dashboard';
+import { useEffect } from 'react';
+import { useInstances } from '../useCases/instances';
 
 export function App() {
+  const { authentication } = useInstances();
+
+  useEffect(() => {
+    authentication.onLoginSucceeded$.subscribe(() => {
+      console.log('onLoginSucceeded redirection');
+    });
+  }, [authentication]);
+
   return (
     <BrowserRouter>
       <Routes>

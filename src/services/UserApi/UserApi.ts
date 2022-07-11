@@ -1,9 +1,12 @@
-import { RegisterService } from '../../hexactInstance';
+import { Service } from 'typedi';
+import { userApiToken } from './IUserApi';
 import type { IUserApi } from './IUserApi';
 
-@RegisterService('User')
+@Service(userApiToken)
 export class UserApi implements IUserApi {
   fetchUserById: IUserApi['fetchUserById'] = (data) => {
+    console.log(`fetching user ${data.userId}`)
+
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({
@@ -11,7 +14,7 @@ export class UserApi implements IUserApi {
           name: 'John Doe',
           email: 'john.doe@gmail.com',
         });
-      }, 2000);
+      }, 500);
     });
   }
 }

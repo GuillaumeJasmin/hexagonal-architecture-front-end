@@ -1,9 +1,5 @@
 import { Observable } from 'rxjs';
-
-export interface AuthenticationState {
-  isLogging: boolean;
-  loginError: string | null;
-}
+import { Token } from 'typedi';
 
 export interface IAuthentication {
   isLogging$: Observable<boolean>;
@@ -13,3 +9,5 @@ export interface IAuthentication {
   login(data: { email: string; password: string }): Promise<void>;
   logout(): Promise<void>;
 }
+
+export const authenticationToken = new Token<IAuthentication>('Authentication');
