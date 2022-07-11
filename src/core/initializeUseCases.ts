@@ -1,5 +1,5 @@
 import { Container } from 'typedi';
-import { tokensList } from './utils'
+import { tokensList } from './Service'
 
 export interface IUseCase {
   initialize(): void;
@@ -14,5 +14,3 @@ export function initializeUseCases() {
     }
   });
 }
-
-initializeUseCases();

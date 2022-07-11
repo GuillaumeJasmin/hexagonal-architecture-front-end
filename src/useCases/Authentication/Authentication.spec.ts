@@ -1,20 +1,11 @@
 /* eslint-disable jest/valid-title */
 
 import 'reflect-metadata';
-import { Observable } from 'rxjs';
 import { resetAndGetAuthenticationApi } from '../../services/AuthenticationApi/AuthenticationApiTest';
 import { resetAndGetCurrentUser } from '../../useCases/CurrentUser/CurrentUserTest';
 import './Authentication';
 import { getAuthentication } from './instance';
-import { initializeUseCases } from '../../core/initializeUseCases';
-
-function spySubscribe(obs$: Observable<any>) {
-  const subscription = jest.fn();
-
-  obs$.subscribe(subscription);
-
-  return subscription;
-}
+import { initializeUseCases, spySubscribe } from '../../core';
 
 describe('UseCase - Authentication', () => {
   let authenticationApi: ReturnType<typeof resetAndGetAuthenticationApi>;
@@ -39,23 +30,20 @@ describe('UseCase - Authentication', () => {
     const isLogging = spySubscribe(authentication.isLogging$);
     const onLoginSucceeded = spySubscribe(authentication.onLoginSucceeded$);
 
-    authenticationApi.login.mockReturnValue(Promise.resolve({ userId: 'abc' }));
+    authenticationApi.login.mockResolvedValue({ userId: 'abc' });
     currentUser.fetchUserById.mockResolvedValue();
 
     await authentication.login({
       email: 'john.doe@email.com',
-      password: 'abc',
+      password: '0000',
     });
 
-    expect(isLogging).toHaveBeenNthCalledWith(1, false);
-    expect(isLogging).toHaveBeenNthCalledWith(2, true);
-    expect(isLogging).toHaveBeenNthCalledWith(3, false);
-    expect(isLogging).toHaveBeenCalledTimes(3);
+    isLogging.expect.toHaveEmittedValues(false, true, false);
 
     expect(authenticationApi.login).toHaveBeenCalledTimes(1);
     expect(authenticationApi.login).toHaveBeenCalledWith({
       email: 'john.doe@email.com',
-      password: 'abc',
+      password: '0000',
     });
 
     expect(currentUser.fetchUserById).toHaveBeenCalledTimes(1);

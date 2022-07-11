@@ -1,11 +1,10 @@
 import { Container } from 'typedi';
-import { UseCaseTest } from '../../core';
+import { mockFn } from '../../core';
 import type { IAuthentication } from './IAuthentication';
 import { authenticationToken } from './IAuthentication';
-import { mockBehaviorSubject } from '../../core/RxJSMock';
-import { mockSubject } from '../../core/RxJSMock';
+import { mockBehaviorSubject, mockSubject } from '../../core';
 
-@UseCaseTest(authenticationToken)
+
 export class AuthenticationTest implements IAuthentication {
   isLogging$ = mockBehaviorSubject<IAuthentication['isLogging$']>('isLogging');
 
@@ -14,16 +13,12 @@ export class AuthenticationTest implements IAuthentication {
   onLoginSucceeded$ = mockSubject<IAuthentication['onLoginSucceeded$']>();
 
   onLogoutSucceeded$ = mockSubject<IAuthentication['onLogoutSucceeded$']>();
+  
+  onUnauthorized$ = mockSubject<IAuthentication['onUnauthorized$']>();
 
-  login = jest.fn<
-    ReturnType<IAuthentication['login']>,
-    Parameters<IAuthentication['login']>
-  >();
-
-  logout = jest.fn<
-    ReturnType<IAuthentication['logout']>,
-    Parameters<IAuthentication['logout']>
-  >();
+  login = mockFn<IAuthentication['login']>();
+  
+  logout = mockFn<IAuthentication['logout']>();
 }
 
 export function resetAndGetAuthentication() {

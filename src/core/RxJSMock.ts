@@ -13,7 +13,9 @@ class MockBehaviorSubject<T> extends BehaviorSubject<ObservedValueOf<T>> {
 
   subscribe: BehaviorSubject<ObservedValueOf<T>>['subscribe'] = (...args) => {
     if (!this.valueIsSet) {
-      throw new Error(`MockBehaviorSubject: value not set - ${this.debugMessage}`);
+      throw new Error(
+        `MockBehaviorSubject: value not set - ${this.debugMessage}`
+      );
     }
 
     // @ts-expect-error Override
@@ -40,4 +42,8 @@ export function mockBehaviorSubject<T>(debugMessage?: string) {
 
 export function mockSubject<T>() {
   return new MockSubject<T>();
+}
+
+export function mockFn<T extends (...args: any[]) => any>() {
+  return jest.fn<ReturnType<T>, Parameters<T>>();
 }

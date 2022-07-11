@@ -1,22 +1,15 @@
 import { Container } from 'typedi';
-import { UseCaseTest } from '../../core';
+import { mockFn } from '../../core';
 import type { ICurrentUser } from './ICurrentUser';
 import { currentUserToken } from './ICurrentUser';
-import { mockBehaviorSubject } from '../../core/RxJSMock';
+import { mockBehaviorSubject } from '../../core';
 
-@UseCaseTest(currentUserToken)
 export class CurrentUserTest implements ICurrentUser {
   user$ = mockBehaviorSubject<ICurrentUser['user$']>('User');
 
-  fetchUserById = jest.fn<
-    ReturnType<ICurrentUser['fetchUserById']>,
-    Parameters<ICurrentUser['fetchUserById']>
-  >();
-
-  setUser = jest.fn<
-    ReturnType<ICurrentUser['setUser']>,
-    Parameters<ICurrentUser['setUser']>
-  >();
+  fetchUserById = mockFn<ICurrentUser['fetchUserById']>();
+  
+  setUser = mockFn<ICurrentUser['setUser']>();
 }
 
 export function resetAndGetCurrentUser() {

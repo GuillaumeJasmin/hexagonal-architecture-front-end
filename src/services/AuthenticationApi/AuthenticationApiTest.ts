@@ -1,19 +1,14 @@
 import { Container } from 'typedi';
-import { UseCaseTest } from '../../core';
+import { mockFn, mockSubject } from '../../core';
 import type { IAuthenticationApi } from './IAuthenticationApi';
 import { authenticationApiToken } from './IAuthenticationApi';
 
-@UseCaseTest(authenticationApiToken)
 export class AuthenticationApiTest implements IAuthenticationApi {
-  public login = jest.fn<
-    ReturnType<IAuthenticationApi['login']>,
-    Parameters<IAuthenticationApi['login']>
-  >();
+  public onUnauthorized$ = mockSubject();
 
-  public logout = jest.fn<
-    ReturnType<IAuthenticationApi['logout']>,
-    Parameters<IAuthenticationApi['logout']>
-  >();
+  public login = mockFn<IAuthenticationApi['login']>();
+  
+  public logout = mockFn<IAuthenticationApi['logout']>();
 }
 
 export function resetAndGetAuthenticationApi() {

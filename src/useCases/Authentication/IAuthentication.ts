@@ -6,6 +6,7 @@ export interface IAuthentication {
   isLogged$: Observable<boolean>;
   onLoginSucceeded$: Observable<unknown>;
   onLogoutSucceeded$: Observable<unknown>;
+  onUnauthorized$: Observable<unknown>;
   login(data: { email: string; password: string }): Promise<void>;
   logout(): Promise<void>;
 }

@@ -30,7 +30,6 @@ export function Login() {
   );
 
   useSubscribe(authentication.onLoginSucceeded$, () => {
-    console.log('onLoginSucceeded');
     navigate('/dashboard');
   });
 
