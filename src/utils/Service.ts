@@ -10,9 +10,6 @@ export function Service<T extends string>(token: Token<T>) {
   return ServiceBase({ id: token, transient: process.env.NODE_ENV === 'test' });
 }
 
-/**
- * @deprecated Current no longer used
- */
 export function ServiceTest<T extends string>(token: Token<T>) {
   tokensList.push(token);
 

@@ -1,9 +1,9 @@
 import { Inject } from 'typedi';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { withRequestsStatus, updateRequestStatus } from '@ngneat/elf-requests';
-import { Service } from '../../core';
-import type { IUserApi } from '../../services/UserApi/IUserApi';
-import { userApiToken } from '../../services/UserApi/IUserApi';
+import { Service } from '../../../utils';
+import type { IUserApi } from '../../ports/Api/UserApi/IUserApi';
+import { userApiToken } from '../../ports/Api/UserApi/IUserApi';
 import {
   ICurrentUser,
   CurrentUserState,

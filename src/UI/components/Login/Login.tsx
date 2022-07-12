@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useObservable } from '@ngneat/react-rxjs';
 import { useNavigate } from 'react-router-dom';
-import { useSubscribe } from '../../../core';
-import { useInstances } from '../../../useCases/instances';
+import { useSubscribe } from '../../../utils';
+import { useInstances } from '../../../business/useCases/instances';
 
 export function Login() {
   const { authentication } = useInstances();

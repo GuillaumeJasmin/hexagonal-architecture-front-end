@@ -1,8 +1,9 @@
 import { Container } from 'typedi';
-import { mockFn, mockSubject } from '../../core';
+import { mockFn, mockSubject, ServiceTest } from '../../../../utils';
 import type { IAuthenticationApi } from './IAuthenticationApi';
 import { authenticationApiToken } from './IAuthenticationApi';
 
+@ServiceTest(authenticationApiToken)
 export class AuthenticationApiTest implements IAuthenticationApi {
   public onUnauthorized$ = mockSubject();
 

@@ -1,9 +1,10 @@
 import { Container } from 'typedi';
-import { mockFn } from '../../core';
+import { mockFn, ServiceTest } from '../../../utils';
 import type { ICurrentUser } from './ICurrentUser';
 import { currentUserToken } from './ICurrentUser';
-import { mockBehaviorSubject } from '../../core';
+import { mockBehaviorSubject } from '../../../utils';
 
+@ServiceTest(currentUserToken)
 export class CurrentUserTest implements ICurrentUser {
   user$ = mockBehaviorSubject<ICurrentUser['user$']>('User');
 

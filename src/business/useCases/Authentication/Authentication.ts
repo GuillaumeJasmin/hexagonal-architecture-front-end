@@ -1,9 +1,9 @@
 import { Inject } from 'typedi';
 import { filter, map, skip } from 'rxjs/operators';
 import { createStore, withProps } from '@ngneat/elf';
-import { Service } from '../../core';
-import type { IAuthenticationApi } from '../../services/AuthenticationApi/IAuthenticationApi';
-import { authenticationApiToken } from '../../services/AuthenticationApi/IAuthenticationApi';
+import { Service } from '../../../utils';
+import type { IAuthenticationApi } from '../../ports/Api/AuthenticationApi/IAuthenticationApi';
+import { authenticationApiToken } from '../../ports/Api/AuthenticationApi/IAuthenticationApi';
 import { IAuthentication, authenticationToken } from './IAuthentication';
 import type { ICurrentUser } from '../CurrentUser/ICurrentUser';
 import { currentUserToken } from '../CurrentUser/ICurrentUser';
@@ -13,7 +13,6 @@ import {
   selectRequestStatus,
   selectIsRequestPending,
 } from '@ngneat/elf-requests';
-import { Subject } from 'rxjs';
 
 export interface AuthenticationState {
   isLogging: boolean;
@@ -58,12 +57,10 @@ export class Authentication implements IAuthentication {
     skip(1),
     filter((status) => status.value === 'success')
   );
-  
-  // public onUnauthorized$ = new Subject<void>();
 
   public get onUnauthorized$() {
     return this.authenticationApi.onUnauthorized$;
-  };
+  }
 
   @Inject(authenticationApiToken)
   private authenticationApi!: IAuthenticationApi;
@@ -71,11 +68,9 @@ export class Authentication implements IAuthentication {
   @Inject(currentUserToken)
   private currentUser!: ICurrentUser;
 
-  // public initialize() {
-  //   this.authenticationApi.onUnauthorized$.subscribe(() => {
-  //     this.onUnauthorized$.next();
-  //   });
-  // }
+  public initialize() {
+    // ...
+  }
 
   public async login(data: { email: string; password: string }) {
     try {

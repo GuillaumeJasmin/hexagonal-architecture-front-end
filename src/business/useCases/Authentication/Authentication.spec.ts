@@ -1,11 +1,11 @@
 /* eslint-disable jest/valid-title */
 
 import 'reflect-metadata';
-import { resetAndGetAuthenticationApi } from '../../services/AuthenticationApi/AuthenticationApiTest';
-import { resetAndGetCurrentUser } from '../../useCases/CurrentUser/CurrentUserTest';
+import { resetAndGetAuthenticationApi } from '../../ports/Api/AuthenticationApi/AuthenticationApiTest';
+import { resetAndGetCurrentUser } from '../CurrentUser/CurrentUserTest';
 import './Authentication';
 import { getAuthentication } from './instance';
-import { initializeUseCases, spySubscribe } from '../../core';
+import { initializeUseCases, spySubscribe } from '../../../utils';
 
 describe('UseCase - Authentication', () => {
   let authenticationApi: ReturnType<typeof resetAndGetAuthenticationApi>;

@@ -1,5 +1,5 @@
-import { Observable } from "rxjs";
-import { Token } from "typedi";
+import { Observable } from 'rxjs';
+import { Token } from 'typedi';
 
 export interface IAuthenticationApi {
   onUnauthorized$: Observable<unknown>;
@@ -7,4 +7,6 @@ export interface IAuthenticationApi {
   logout(): Promise<void>;
 }
 
-export const authenticationApiToken = new Token<IAuthenticationApi>('AuthenticationApi');
+export const authenticationApiToken = new Token<IAuthenticationApi>(
+  'AuthenticationApi'
+);

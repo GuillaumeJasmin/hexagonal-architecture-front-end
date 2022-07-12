@@ -2,8 +2,8 @@
 import 'reflect-metadata';
 import { createMemoryHistory } from 'history';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { resetAndGetAuthentication } from '../../../useCases/Authentication/AuthenticationTest';
-// import { resetAndGetCurrentUser } from '../../../useCases/CurrentUser/CurrentUserTest';
+import { resetAndGetAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
+// import { resetAndGetCurrentUser } from '../../../business/useCases/CurrentUser/CurrentUserTest';
 import { Login } from './Login';
 import { BrowserRouter, Router } from 'react-router-dom';
 

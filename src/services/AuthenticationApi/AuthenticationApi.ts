@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Subject } from 'rxjs';
-import { authenticationApiToken } from './IAuthenticationApi';
-import type { IAuthenticationApi } from './IAuthenticationApi';
+import { authenticationApiToken } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';
+import type { IAuthenticationApi } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';
 
 @Service(authenticationApiToken)
 export class AuthenticationApi implements IAuthenticationApi {

@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useObservable } from '@ngneat/react-rxjs';
-import { useInstances } from '../../../useCases/instances';
-import { useSubscribe } from '../../../core';
+import { useInstances } from '../../../business/useCases/instances';
+import { useSubscribe } from '../../../utils';
 
 export function Dashboard() {
   const { currentUser, authentication } = useInstances();
@@ -15,7 +15,6 @@ export function Dashboard() {
   }, [navigate]);
 
   useSubscribe(authentication.onLogoutSucceeded$, () => {
-    console.log('onLogoutSucceeded redirection');
     navigateToLogin();
   });
 

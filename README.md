@@ -96,3 +96,8 @@ services
         └── AuthenticationApiMock.ts     # Fake class with spy
         └── IAuthenticationApi.ts        # Interface of the service
 ```
+
+
+### Resources
+
+https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c

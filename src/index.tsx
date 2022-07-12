@@ -1,9 +1,8 @@
 import 'reflect-metadata';
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import './registerUseCase';
 import './services/registerServices';
-import './useCases/registerUseCase';
+import './business/useCases/registerUseCase';
 import { App } from './UI/App';
 import reportWebVitals from './reportWebVitals';
 

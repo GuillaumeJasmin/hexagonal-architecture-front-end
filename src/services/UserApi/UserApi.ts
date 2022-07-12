@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
-import { userApiToken } from './IUserApi';
-import type { IUserApi } from './IUserApi';
+import { userApiToken } from '../../business/ports/Api/UserApi/IUserApi';
+import type { IUserApi } from '../../business/ports/Api/UserApi/IUserApi';
 
 @Service(userApiToken)
 export class UserApi implements IUserApi {

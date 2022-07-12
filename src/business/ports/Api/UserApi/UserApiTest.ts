@@ -1,8 +1,9 @@
 import { Container } from 'typedi';
-import { mockFn } from '../../core';
+import { mockFn, ServiceTest } from '../../../../utils';
 import type { IUserApi } from './IUserApi';
 import { userApiToken } from './IUserApi';
 
+@ServiceTest(userApiToken)
 export class UserApiTest implements IUserApi {
   fetchUserById = mockFn<IUserApi['fetchUserById']>();
 }
