@@ -1,19 +1,16 @@
 import { Observable } from 'rxjs';
-import { Token } from 'typedi';
+import { UseCase, Token } from '../../../utils';
 
-export interface IAuthentication {
-  isInitialized$: Observable<boolean>;
+export interface IAuthentication extends UseCase {
   isLogging$: Observable<boolean>;
   isLogged$: Observable<boolean>;
   onLoginSucceeded$: Observable<unknown>;
   onLogoutSucceeded$: Observable<unknown>;
   onUnauthorized$: Observable<unknown>;
-  onRedirectToLogin$: Observable<unknown>;
-  onRedirectToDashboard$: Observable<unknown>;
-  initAuthentication(): Promise<void>;
-  initialize(): Promise<void>;
   login(data: { email: string; password: string }): Promise<void>;
   logout(): Promise<void>;
 }
 
-export const authenticationToken = new Token<IAuthentication>('Authentication');
+export const authenticationToken = new Token<IAuthentication>(
+  'Authentication'
+);

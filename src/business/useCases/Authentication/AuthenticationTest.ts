@@ -6,8 +6,6 @@ import { mockBehaviorSubject, mockSubject } from '../../../utils';
 
 @ServiceTest(authenticationToken)
 export class AuthenticationTest implements IAuthentication {
-  isInitialized$ = mockBehaviorSubject<IAuthentication['isInitialized$']>();
-  
   isLogging$ = mockBehaviorSubject<IAuthentication['isLogging$']>();
 
   isLogged$ = mockBehaviorSubject<IAuthentication['isLogged$']>();
@@ -15,24 +13,16 @@ export class AuthenticationTest implements IAuthentication {
   onLoginSucceeded$ = mockSubject<IAuthentication['onLoginSucceeded$']>();
 
   onLogoutSucceeded$ = mockSubject<IAuthentication['onLogoutSucceeded$']>();
-  
+
   onUnauthorized$ = mockSubject<IAuthentication['onUnauthorized$']>();
-  
-  onRedirectToLogin$ = mockSubject<IAuthentication['onRedirectToLogin$']>();
-  
-  onRedirectToDashboard$ = mockSubject<IAuthentication['onRedirectToDashboard$']>();
 
   initialize = mockFn<IAuthentication['initialize']>();
-  
-  initAuthentication = mockFn<IAuthentication['initAuthentication']>();
-  
+
   login = mockFn<IAuthentication['login']>();
-  
+
   logout = mockFn<IAuthentication['logout']>();
 }
 
-export function resetAndGetAuthentication() {
-  Container.set(authenticationToken, new AuthenticationTest());
-
+export function getAuthentication() {
   return Container.get<AuthenticationTest>(authenticationToken);
 }

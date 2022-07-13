@@ -2,16 +2,17 @@
 import 'reflect-metadata';
 import { createMemoryHistory } from 'history';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { resetAndGetAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
-// import { resetAndGetCurrentUser } from '../../../business/useCases/CurrentUser/CurrentUserTest';
-import { Login } from './Login';
 import { BrowserRouter, Router } from 'react-router-dom';
+import { getAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
+import { resetAllInstances } from '../../../utils';
+import { Login } from './Login';
 
 describe('Login', () => {
-  let authentication: ReturnType<typeof resetAndGetAuthentication>;
+  let authentication: ReturnType<typeof getAuthentication>;
 
   beforeEach(() => {
-    authentication = resetAndGetAuthentication();
+    resetAllInstances();
+    authentication = getAuthentication();
   });
 
   it(`

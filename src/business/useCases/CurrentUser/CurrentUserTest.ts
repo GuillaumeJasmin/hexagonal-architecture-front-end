@@ -8,13 +8,13 @@ import { mockBehaviorSubject } from '../../../utils';
 export class CurrentUserTest implements ICurrentUser {
   user$ = mockBehaviorSubject<ICurrentUser['user$']>('User');
 
+  initialize = mockFn<ICurrentUser['initialize']>();
+
   fetchUserById = mockFn<ICurrentUser['fetchUserById']>();
   
   setUser = mockFn<ICurrentUser['setUser']>();
 }
 
-export function resetAndGetCurrentUser() {
-  Container.set(currentUserToken, new CurrentUserTest());
-
+export function getCurrentUserTest() {
   return Container.get<CurrentUserTest>(currentUserToken);
 }

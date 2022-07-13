@@ -1,4 +1,4 @@
-import { Service } from 'typedi';
+import { Service } from '../../utils';
 import { Subject } from 'rxjs';
 import { authenticationApiToken } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';
 import type { IAuthenticationApi } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';

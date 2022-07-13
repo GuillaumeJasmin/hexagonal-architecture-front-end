@@ -2,18 +2,20 @@
 import 'reflect-metadata';
 import { createMemoryHistory } from 'history';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { resetAndGetAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
-import { resetAndGetCurrentUser } from '../../../business/useCases/CurrentUser/CurrentUserTest';
-import { Dashboard } from './Dashboard';
 import { BrowserRouter, Router } from 'react-router-dom';
+import { getAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
+import { getCurrentUserTest } from '../../../business/useCases/CurrentUser/CurrentUserTest';
+import { resetAllInstances } from '../../../utils';
+import { Dashboard } from './Dashboard';
 
 describe('Dashboard', () => {
-  let authentication: ReturnType<typeof resetAndGetAuthentication>;
-  let currentUser: ReturnType<typeof resetAndGetCurrentUser>;
+  let authentication: ReturnType<typeof getAuthentication>;
+  let currentUser: ReturnType<typeof getCurrentUserTest>;
 
   beforeEach(() => {
-    authentication = resetAndGetAuthentication();
-    currentUser = resetAndGetCurrentUser();
+    resetAllInstances();
+    authentication = getAuthentication();
+    currentUser = getCurrentUserTest();
   });
 
   it(`

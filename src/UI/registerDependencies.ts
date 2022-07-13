@@ -1,2 +1,2 @@
 import '../services/registerServices';
-import '../business/useCases/registerUseCase';
+import '../business/registerUseCase';

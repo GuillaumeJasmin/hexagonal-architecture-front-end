@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
-import { Token } from 'typedi';
+import { UseCase, Token } from '../../../utils';
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -11,7 +11,7 @@ export interface CurrentUserState {
   user: null | User;
 }
 
-export interface ICurrentUser {
+export interface ICurrentUser extends UseCase {
   user$: Observable<CurrentUserState['user']>;
   fetchUserById(data: { userId: string }): Promise<void>;
   setUser(user: CurrentUserState['user']): Promise<void>;

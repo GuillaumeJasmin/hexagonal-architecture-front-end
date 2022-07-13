@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useObservable } from '@ngneat/react-rxjs';
-import { useInstances } from '../../../business/useCases/instances';
-import { useSubscribe } from '../../../utils';
+import { useSubscribe } from '../../hooks/useSubscribe';
+import { useCaseInstances } from '../../hooks/useInstances';
 
 export function Dashboard() {
-  const { currentUser, authentication } = useInstances();
+  const { currentUser, authentication } = useCaseInstances();
 
   const navigate = useNavigate();
   const [user] = useObservable(currentUser.user$);
@@ -15,7 +15,6 @@ export function Dashboard() {
   }, [navigate]);
 
   useSubscribe(authentication.onLogoutSucceeded$, () => {
-    console.log('## Dashboard - onRedirectToLogin');
     navigateToLogin();
   });
 

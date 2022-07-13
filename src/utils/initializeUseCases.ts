@@ -1,21 +1,17 @@
 import { Container } from 'typedi';
-import { tokensList } from './Service';
+import { getContainerInstances } from './Registry/getContainerInstances';
 
-export interface IUseCase {
+interface IUseCase {
   initialize(): void;
 }
 
 export function initializeUseCases() {
-  tokensList.forEach((token) => {
-    try {
-      const instance = Container.get<IUseCase>(token);
+  getContainerInstances().forEach((metadata) => {
+    // @ts-expect-error conflict with id and token type
+    const instance = Container.get<IUseCase>(metadata.id);
 
-      if (instance.initialize) {
-        instance.initialize();
-      }
-    } catch (e) {
-      console.error(`Error during initialization of ${token.name} use-case`);
-      throw e;
+    if (instance.initialize) {
+      instance.initialize();
     }
   });
 }

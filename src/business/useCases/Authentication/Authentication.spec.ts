@@ -1,27 +1,57 @@
 /* eslint-disable jest/valid-title */
 
 import 'reflect-metadata';
-import { resetAndGetAuthenticationApi } from '../../ports/Api/AuthenticationApi/AuthenticationApiTest';
-import { ITokenStorage } from '../../ports/Storage/ITokenStorage';
-import { resetAndGetTokenStorage } from '../../ports/Storage/TokenStorageTest';
-import { resetAndGetCurrentUser } from '../CurrentUser/CurrentUserTest';
+import { getTokenStorageTest } from '../../ports/Storage/TokenStorageTest';
+import { getCurrentUserTest } from '../CurrentUser/CurrentUserTest';
 import './Authentication';
-import { getAuthentication } from './instance';
-import { initializeUseCases, spySubscribe } from '../../../utils';
+import type { IAuthentication } from './IAuthentication';
+import { authenticationToken } from './IAuthentication';
+import {
+  initializeUseCases,
+  resetAllInstances,
+  spySubscribe,
+} from '../../../utils';
+import Container from 'typedi';
+import {
+  getAuthenticationApiTest,
+  // AuthenticationApiTest,
+  // authenticationApiToken,
+} from '../../ports/Api/AuthenticationApi/AuthenticationApiTest';
+// import {
+//   TokenStorageTest,
+//   tokenStorageToken,
+// } from '../../ports/Storage/TokenStorageTest';
 
 describe('UseCase - Authentication', () => {
-  let authenticationApi: ReturnType<typeof resetAndGetAuthenticationApi>;
-  let currentUser: ReturnType<typeof resetAndGetCurrentUser>;
-  let tokenStorage: ReturnType<typeof resetAndGetTokenStorage>;
-  let authentication: ReturnType<typeof getAuthentication>;
+  let authentication: IAuthentication;
+  let currentUser: ReturnType<typeof getCurrentUserTest>;
+  let authenticationApi: ReturnType<typeof getAuthenticationApiTest>;
+  let tokenStorage: ReturnType<typeof getTokenStorageTest>;
 
   beforeEach(() => {
-    authenticationApi = resetAndGetAuthenticationApi();
-    currentUser = resetAndGetCurrentUser();
-    tokenStorage = resetAndGetTokenStorage();
-    authentication = getAuthentication();
-    // initializeUseCases();
+    resetAllInstances();
+    authentication = Container.get(authenticationToken);
+    authenticationApi = getAuthenticationApiTest();
+    tokenStorage = getTokenStorageTest();
+    currentUser = getCurrentUserTest();
+    initializeUseCases();
   });
+
+  // let authentication: IAuthentication;
+  // let authenticationApi: AuthenticationApiTest;
+  // let tokenStorage: TokenStorageTest;
+
+  // beforeEach(() => {
+  //   resetAllInstances();
+
+  //   let authenticationApi = new AuthenticationApiTest();
+  //   let tokenStorage = new AuthenticationApiTest();
+
+  //   Container.set([
+  //     { id: authenticationApiToken, value: {authenticationApi} },
+  //     { id: tokenStorageToken, value: tokenStorage },
+  //   ]);
+  // });
 
   it(`
     Given initial state
@@ -84,43 +114,5 @@ describe('UseCase - Authentication', () => {
 
     expect(onLogoutSucceeded).toHaveBeenCalledTimes(1);
     expect(tokenStorage.removeToken).toHaveBeenCalledTimes(1);
-  });
-
-  it(`
-    Given a userId set in token storage
-    When I init authentication
-    Then fetchUserById service should have been called with userId
-      And onRedirectToDashboard$ should have been called once
-  `, async () => {
-    const userId = 'abc';
-    const onRedirectToDashboard = spySubscribe(
-      authentication.onRedirectToDashboard$
-    );
-
-    tokenStorage.getToken.mockReturnValue(userId);
-
-    await authentication.initAuthentication();
-
-    expect(currentUser.fetchUserById).toHaveBeenCalledTimes(1);
-    expect(currentUser.fetchUserById).toHaveBeenNthCalledWith(1, { userId });
-
-    onRedirectToDashboard.expect.toHaveEmittedValues(undefined);
-  });
-
-  it(`
-    Given a userId set to null in token storage
-    When I init authentication
-    Then fetchUserById should not have been called
-      And onRedirectToLogin$ should have been called once
-  `, async () => {
-    const onRedirectToLogin = spySubscribe(authentication.onRedirectToLogin$);
-
-    tokenStorage.getToken.mockReturnValue(null);
-
-    await authentication.initAuthentication();
-
-    expect(currentUser.fetchUserById).not.toHaveBeenCalled();
-
-    onRedirectToLogin.expect.toHaveEmittedValues(undefined);
   });
 });

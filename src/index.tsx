@@ -2,8 +2,7 @@ import 'reflect-metadata';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import './services/registerServices';
-import './business/useCases/registerUseCase';
+import './registerDependencies';
 import { App } from './UI/App';
 
 ReactDOM.render(

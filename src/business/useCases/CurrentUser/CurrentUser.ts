@@ -1,7 +1,7 @@
 import { Inject } from 'typedi';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { withRequestsStatus, updateRequestStatus } from '@ngneat/elf-requests';
-import { Service } from '../../../utils';
+import { Service, UseCase } from '../../../utils';
 import type { IUserApi } from '../../ports/Api/UserApi/IUserApi';
 import { userApiToken } from '../../ports/Api/UserApi/IUserApi';
 import {
@@ -10,23 +10,21 @@ import {
   currentUserToken,
 } from './ICurrentUser';
 
-const initialCurrentUserState: CurrentUserState = {
-  user: null,
-};
-
 @Service(currentUserToken)
-export class CurrentUser implements ICurrentUser {
+export class CurrentUser extends UseCase implements ICurrentUser {
+  @Inject(userApiToken) private userApi!: IUserApi;
+
   private store = createStore(
     { name: 'CurrentUser' },
-    withProps<CurrentUserState>(initialCurrentUserState),
+    withProps<CurrentUserState>({
+      user: null,
+    }),
     withRequestsStatus<'fetchUserById'>()
   );
 
   public get user$() {
     return this.store.pipe(select((state) => state.user));
   }
-
-  constructor(@Inject(userApiToken) private userApi: IUserApi) {}
 
   public async fetchUserById(data: { userId: string }) {
     try {
