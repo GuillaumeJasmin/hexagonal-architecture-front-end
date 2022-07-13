@@ -54,6 +54,6 @@ describe('Dashboard', () => {
       </Router>
     );
 
-    expect(history.location.pathname).toEqual('/');
+    expect(history.location.pathname).toEqual('/login');
   });
 });

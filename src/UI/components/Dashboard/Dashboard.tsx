@@ -11,10 +11,11 @@ export function Dashboard() {
   const [user] = useObservable(currentUser.user$);
 
   const navigateToLogin = useCallback(() => {
-    navigate('/');
+    navigate('/login');
   }, [navigate]);
 
   useSubscribe(authentication.onLogoutSucceeded$, () => {
+    console.log('## Dashboard - onRedirectToLogin');
     navigateToLogin();
   });
 
