@@ -1,10 +1,7 @@
-import { Container } from 'typedi';
-import { mockFn, ServiceTest } from '../../../utils';
+import { mockFn } from '../../../utils';
 import type { IAuthentication } from './IAuthentication';
-import { authenticationToken } from './IAuthentication';
 import { mockBehaviorSubject, mockSubject } from '../../../utils';
 
-@ServiceTest(authenticationToken)
 export class AuthenticationTest implements IAuthentication {
   isLogging$ = mockBehaviorSubject<IAuthentication['isLogging$']>();
 
@@ -23,6 +20,4 @@ export class AuthenticationTest implements IAuthentication {
   logout = mockFn<IAuthentication['logout']>();
 }
 
-export function getAuthentication() {
-  return Container.get<AuthenticationTest>(authenticationToken);
-}
+export { authenticationToken } from './IAuthentication';

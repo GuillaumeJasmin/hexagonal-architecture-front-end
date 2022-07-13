@@ -1,57 +1,43 @@
 /* eslint-disable jest/valid-title */
 
 import 'reflect-metadata';
-import { getTokenStorageTest } from '../../ports/Storage/TokenStorageTest';
-import { getCurrentUserTest } from '../CurrentUser/CurrentUserTest';
-import './Authentication';
+import { CurrentUserTest } from '../CurrentUser/CurrentUserTest';
 import type { IAuthentication } from './IAuthentication';
 import { authenticationToken } from './IAuthentication';
-import {
-  initializeUseCases,
-  resetAllInstances,
-  spySubscribe,
-} from '../../../utils';
+import { UseCase, spySubscribe } from '../../../utils';
 import Container from 'typedi';
 import {
-  getAuthenticationApiTest,
-  // AuthenticationApiTest,
-  // authenticationApiToken,
+  AuthenticationApiTest,
+  authenticationApiToken,
 } from '../../ports/Api/AuthenticationApi/AuthenticationApiTest';
-// import {
-//   TokenStorageTest,
-//   tokenStorageToken,
-// } from '../../ports/Storage/TokenStorageTest';
+import {
+  TokenStorageTest,
+  tokenStorageToken,
+} from '../../ports/Storage/TokenStorageTest';
+import { currentUserToken } from '../CurrentUser/ICurrentUser';
+import './Authentication';
 
 describe('UseCase - Authentication', () => {
   let authentication: IAuthentication;
-  let currentUser: ReturnType<typeof getCurrentUserTest>;
-  let authenticationApi: ReturnType<typeof getAuthenticationApiTest>;
-  let tokenStorage: ReturnType<typeof getTokenStorageTest>;
+  let currentUser: CurrentUserTest;
+  let authenticationApi: AuthenticationApiTest;
+  let tokenStorage: TokenStorageTest;
 
   beforeEach(() => {
-    resetAllInstances();
+    authenticationApi = new AuthenticationApiTest();
+    currentUser = new CurrentUserTest();
+    tokenStorage = new TokenStorageTest();
+
+    Container.set([
+      { id: authenticationApiToken, value: authenticationApi },
+      { id: currentUserToken, value: currentUser },
+      { id: tokenStorageToken, value: tokenStorage },
+    ]);
+
     authentication = Container.get(authenticationToken);
-    authenticationApi = getAuthenticationApiTest();
-    tokenStorage = getTokenStorageTest();
-    currentUser = getCurrentUserTest();
-    initializeUseCases();
+
+    UseCase.initializeAll();
   });
-
-  // let authentication: IAuthentication;
-  // let authenticationApi: AuthenticationApiTest;
-  // let tokenStorage: TokenStorageTest;
-
-  // beforeEach(() => {
-  //   resetAllInstances();
-
-  //   let authenticationApi = new AuthenticationApiTest();
-  //   let tokenStorage = new AuthenticationApiTest();
-
-  //   Container.set([
-  //     { id: authenticationApiToken, value: {authenticationApi} },
-  //     { id: tokenStorageToken, value: tokenStorage },
-  //   ]);
-  // });
 
   it(`
     Given initial state

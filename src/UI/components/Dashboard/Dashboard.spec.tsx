@@ -3,19 +3,25 @@ import 'reflect-metadata';
 import { createMemoryHistory } from 'history';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter, Router } from 'react-router-dom';
-import { getAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
-import { getCurrentUserTest } from '../../../business/useCases/CurrentUser/CurrentUserTest';
-import { resetAllInstances } from '../../../utils';
+import { AuthenticationTest } from '../../../business/useCases/Authentication/AuthenticationTest';
+import { CurrentUserTest } from '../../../business/useCases/CurrentUser/CurrentUserTest';
 import { Dashboard } from './Dashboard';
+import { authenticationToken } from '../../../business/useCases/Authentication/IAuthentication';
+import { currentUserToken } from '../../../business/useCases/CurrentUser/ICurrentUser';
+import Container from 'typedi';
 
 describe('Dashboard', () => {
-  let authentication: ReturnType<typeof getAuthentication>;
-  let currentUser: ReturnType<typeof getCurrentUserTest>;
+  let authentication: AuthenticationTest;
+  let currentUser: CurrentUserTest;
 
   beforeEach(() => {
-    resetAllInstances();
-    authentication = getAuthentication();
-    currentUser = getCurrentUserTest();
+    authentication = new AuthenticationTest();
+    currentUser = new CurrentUserTest();
+
+    Container.set([
+      { id: authenticationToken, value: authentication },
+      { id: currentUserToken, value: currentUser },
+    ]);
   });
 
   it(`

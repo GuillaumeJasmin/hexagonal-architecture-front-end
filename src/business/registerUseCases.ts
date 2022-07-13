@@ -3,6 +3,6 @@ import './useCases/Authentication/Authentication';
 import './useCases/CurrentUser/CurrentUser';
 
 /* the, initialize all use-cases */
-import { initializeUseCases } from '../utils';
+import { UseCase } from '../utils';
 
-initializeUseCases();
+UseCase.initializeAll();

@@ -1,5 +1,5 @@
-import { Service } from '../../utils';
 import { Subject } from 'rxjs';
+import { Service } from '../../utils';
 import { authenticationApiToken } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';
 import type { IAuthenticationApi } from '../../business/ports/Api/AuthenticationApi/IAuthenticationApi';
 
@@ -7,7 +7,7 @@ import type { IAuthenticationApi } from '../../business/ports/Api/Authentication
 export class AuthenticationApi implements IAuthenticationApi {
   public onUnauthorized$ = new Subject<void>();
 
-  public login: IAuthenticationApi['login'] = () => {
+  public login: IAuthenticationApi['login'] = (data) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({

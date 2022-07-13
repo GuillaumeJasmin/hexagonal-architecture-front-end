@@ -3,16 +3,23 @@ import 'reflect-metadata';
 import { createMemoryHistory } from 'history';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter, Router } from 'react-router-dom';
-import { getAuthentication } from '../../../business/useCases/Authentication/AuthenticationTest';
-import { resetAllInstances } from '../../../utils';
+import { AuthenticationTest } from '../../../business/useCases/Authentication/AuthenticationTest';
 import { Login } from './Login';
+import { authenticationToken } from '../../../business/useCases/Authentication/IAuthentication';
+import Container from 'typedi';
 
 describe('Login', () => {
-  let authentication: ReturnType<typeof getAuthentication>;
+  let authentication: AuthenticationTest;
 
   beforeEach(() => {
-    resetAllInstances();
-    authentication = getAuthentication();
+    authentication = new AuthenticationTest();
+
+    Container.set([
+      {
+        id: authenticationToken,
+        value: authentication,
+      },
+    ]);
   });
 
   it(`
